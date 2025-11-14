@@ -10,6 +10,8 @@ class WikiPageHtmlGenerator:
         out = ""
         out+=("<html>\n")
         out+=("<head>\n")
+        out+=('<meta charset="UTF-8">\n')
+        out+=('<meta name="viewport" content="width=device-width, initial-scale=1.0">\n')
         out+=("<title>"+title.replace("_", " ")+"</title>\n")
         out+=('<link rel="stylesheet" href="styles.css">')
         out+=("</head>\n")
@@ -17,7 +19,8 @@ class WikiPageHtmlGenerator:
         out+=('<script src="script.js"></script>\n')
         out+=('<div id="mw-page-base" class="noprint"></div>\n')
         out+=('<div id="mw-head-base" class="noprint"></div>')
-        out += '''<div class="sidenav">
+        out += '''<button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">&#9776;</button>
+<div class="sidenav" id="sidenav">
 <div class="sidenav-inner">
 <ul class="sidenav-list">
 <li class="sidenav-li"><a href="Main_Page.html">Main page</a></li>
@@ -31,7 +34,7 @@ class WikiPageHtmlGenerator:
 
         out+=("</div>\n")
         out+=("</body>\n")
-        out+=("<footer><p>© 2025, Edward Herbert, OtherMythos</p></footer>\n")
+        out+=("<footer><p>&copy; 2025, Edward Herbert, OtherMythos</p></footer>\n")
         out+=("</html>\n")
 
         return out
@@ -137,25 +140,43 @@ ul {
 
 a.missing-page { color: #bf3c2c; }
 
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    background: #eee;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    padding: 12px 15px;
+    font-size: 20px;
+    cursor: pointer;
+    text-align: left;
+}
+
 .sidenav {
-  width: 180px;
-  position: fixed;
-  z-index: 1;
-  top: 20px;
-  left: 10px;
-  background: #eee;
-  overflow-x: hidden;
-  padding: 8px 0;
+    width: 180px;
+    position: fixed;
+    z-index: 999;
+    top: 20px;
+    left: 10px;
+    background: #eee;
+    overflow-x: hidden;
+    padding: 8px 0;
+    transition: transform 0.3s ease;
 }
 
 .sidenav a {
-  display: block;
-  color: inherit;
-  text-decoration: none;
+    display: block;
+    color: inherit;
+    text-decoration: none;
 }
 
 .sidenav a:hover {
-  color: #064579;
+    color: #064579;
 }
 
 #content, footer {
@@ -189,45 +210,120 @@ footer {
 
 /* ===== DARK MODE ===== */
 @media (prefers-color-scheme: dark) {
-  html, body {
-      background-color: #1a1a1a;
-      color: #e5e5e5;
-  }
+    html, body {
+        background-color: #1a1a1a;
+        color: #e5e5e5;
+    }
 
-  h1, h2, h3, h4, h5, h6 {
-      color: #fff;
-      border-bottom-color: #444;
-  }
+    h1, h2, h3, h4, h5, h6 {
+        color: #fff;
+        border-bottom-color: #444;
+    }
 
-  .mw-body, .parsoid-body {
-      color: #e5e5e5;
-  }
+    .mw-body, .parsoid-body {
+        color: #e5e5e5;
+    }
 
-  a {
-      color: #82b1ff;
-      text-decoration: none;
-  }
+    a {
+        color: #82b1ff;
+        text-decoration: none;
+    }
 
-  a:hover, a:focus {
-      color: #a7c8ff;
-      text-decoration: underline;
-  }
+    a:hover, a:focus {
+        color: #a7c8ff;
+        text-decoration: underline;
+    }
 
-  .sidenav {
-      background: #2a2a2a;
-  }
+    .sidenav {
+        background: #2a2a2a;
+    }
 
-  .sidenav a {
-      color: #d0d0d0;
-  }
+    .sidenav a {
+        color: #d0d0d0;
+    }
 
-  .sidenav a:hover {
-      color: #82b1ff;
-  }
+    .sidenav a:hover {
+        color: #82b1ff;
+    }
 
-  footer {
-      color: #aaaaaa;
-  }
+    .menu-toggle {
+        background: #2a2a2a;
+        border-bottom-color: #444;
+        color: #e5e5e5;
+    }
+
+    footer {
+        color: #aaaaaa;
+    }
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media screen and (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .sidenav {
+        top: 45px;
+        left: 0;
+        height: calc(100% - 45px);
+        transform: translateX(-100%);
+        box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+    }
+
+    .sidenav.active {
+        transform: translateX(0);
+    }
+
+    #content, footer {
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-top: 55px;
+    }
+
+    .mw-body-content {
+        font-size: 1em;
+    }
+
+    h1 {
+        font-size: 150%;
+    }
+
+    h2 {
+        font-size: 130%;
+    }
+
+    .mw-body h1, .mw-body-content h1 {
+        font-size: 1.5em;
+    }
+
+    li.sidenav-li {
+        font-size: 0.85em;
+        padding: 0.4em 0;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    html {
+        font-size: 90%;
+    }
+
+    h1 {
+        font-size: 140%;
+    }
+
+    h2 {
+        font-size: 120%;
+    }
+
+    .mw-body h1, .mw-body-content h1 {
+        font-size: 1.4em;
+    }
+
+    #content, footer {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
 }
 
         '''
@@ -249,6 +345,23 @@ function randomPage(){
     window.location.href = item;
     return false;
 }
+
+function toggleMenu() {
+    const sidenav = document.getElementById('sidenav');
+    sidenav.classList.toggle('active');
+}
+
+// Close menu when clicking outside on mobile
+document.addEventListener('click', function(event) {
+    const sidenav = document.getElementById('sidenav');
+    const menuToggle = document.querySelector('.menu-toggle');
+
+    if (window.innerWidth <= 768) {
+        if (!sidenav.contains(event.target) && !menuToggle.contains(event.target)) {
+            sidenav.classList.remove('active');
+        }
+    }
+});
         '''
         print("Writing javascript to %s" % path)
         with open(path, "w") as text_file:
