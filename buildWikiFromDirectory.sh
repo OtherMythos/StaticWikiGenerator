@@ -14,6 +14,9 @@ if [ -z "${OUT_DIR}" ]; then
     exit 1
 fi
 
+FOOTER="${3}"
+GIT_HASH="${4}"
+
 txtOutDir="${START_DIR}"
 yamlOutDir="/tmp/yamlOutDir"
 #mkdir -p ${txtOutDir}
@@ -28,6 +31,6 @@ done
 htmlOutDir="${OUT_DIR}"
 rm -rf ${htmlOutDir}/*
 mkdir -p ${htmlOutDir}
-python3 ${SCRIPT_DIR}/wikiReconstructorTool.py -i ${yamlOutDir} -o ${htmlOutDir}
+python3 ${SCRIPT_DIR}/wikiReconstructorTool.py -i ${yamlOutDir} -o ${htmlOutDir} ${FOOTER:+-f "$FOOTER"} ${GIT_HASH:+-g "$GIT_HASH"}
 rm -rf ${yamlOutDir}
 #rm -rf ${txtOutDir}

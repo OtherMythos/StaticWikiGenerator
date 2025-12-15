@@ -12,6 +12,8 @@ def main():
     #position argument
     parser.add_argument("-i", "--input", help="Input directory containing pages.")
     parser.add_argument("-o", "--output", help="Output directory to place the finished files into.")
+    parser.add_argument("-f", "--footer", help="Custom footer text to replace the default copyright notice.")
+    parser.add_argument("-g", "--git-hash", help="Git commit hash to include as a comment in the HTML.")
     args = parser.parse_args()
 
     if args.input is None:
@@ -28,7 +30,7 @@ def main():
         return
 
     par = WikiPageParser()
-    htmlGen = WikiPageHtmlGenerator()
+    htmlGen = WikiPageHtmlGenerator(footer=args.footer, gitHash=args.git_hash)
     par.processDirectory(str(inputDirpath))
     par.outputToDirectory(str(outputDirpath), htmlGen)
     htmlGen.writeStyleSheet(outputDirpath / Path("styles.css"))

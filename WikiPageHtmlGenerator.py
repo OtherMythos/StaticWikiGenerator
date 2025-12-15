@@ -1,14 +1,17 @@
 class WikiPageHtmlGenerator:
 
-    def __init__(self):
-        pass
+    def __init__(self, footer=None, gitHash=None):
+        self.footer=footer
+        self.gitHash=gitHash
 
     '''
     Generate page data for a single parsed page.
     '''
     def genForPage(self, title, pageContent):
-        out = ""
+        out=""
         out+=("<html>\n")
+        if self.gitHash:
+            out+=f"<!-- {self.gitHash} -->\n"
         out+=("<head>\n")
         out+=('<meta charset="UTF-8">\n')
         out+=('<meta name="viewport" content="width=device-width, initial-scale=1.0">\n')
@@ -19,7 +22,7 @@ class WikiPageHtmlGenerator:
         out+=('<script src="script.js"></script>\n')
         out+=('<div id="mw-page-base" class="noprint"></div>\n')
         out+=('<div id="mw-head-base" class="noprint"></div>')
-        out += '''<button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">&#9776;</button>
+        out+='''<button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">&#9776;</button>
 <div class="sidenav" id="sidenav">
 <div class="sidenav-inner">
 <ul class="sidenav-list">
@@ -34,7 +37,8 @@ class WikiPageHtmlGenerator:
 
         out+=("</div>\n")
         out+=("</body>\n")
-        out+=("<footer><p>&copy; 2025, Edward Herbert, OtherMythos</p></footer>\n")
+        if self.footer:
+            out+=f"<footer><p>{self.footer}</p></footer>\n"
         out+=("</html>\n")
 
         return out
