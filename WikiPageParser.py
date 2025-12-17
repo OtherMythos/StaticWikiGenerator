@@ -33,8 +33,9 @@ class WikiPageParser:
             # Check if the target exists
             exists = targetLinkAddress in self.availablePages
             cssClass = ' class="missing-page"' if not exists else ""
+            linkTarget = targetLinkAddress + ".html" if exists else "Missing_Page.html"
 
-            self.totalPage += f'<a href="{targetLinkAddress}.html"{cssClass}>{targetCaption}</a>'
+            self.totalPage += f'<a href="{linkTarget}"{cssClass}>{targetCaption}</a>'
 
         elif data["type"] == "heading":
             depth = str(data["depth"])
@@ -136,6 +137,12 @@ class WikiPageParser:
 
         return self.createPageWrapper("All Pages", content)
 
+    def generateMissingPageIndex(self):
+        """Generate a page for when a requested page does not exist."""
+        content = '<p>This page hasn\'t been written yet!</p>'
+
+        return self.createPageWrapper("Missing Page", content)
+
     def outputToDirectory(self, outDir, htmlGenerator):
         for i in self.totalPages:
             pathName = os.path.join(outDir, i[0] + ".html")
@@ -148,6 +155,13 @@ class WikiPageParser:
         allPagesPath = os.path.join(outDir, "All_Pages.html")
         with open(allPagesPath, "w") as text_file:
             staticHtml = htmlGenerator.genForPage("All_Pages", allPagesContent)
+            text_file.write(staticHtml)
+
+        # Generate and write the Missing Page index
+        missingPageContent = self.generateMissingPageIndex()
+        missingPagePath = os.path.join(outDir, "Missing_Page.html")
+        with open(missingPagePath, "w") as text_file:
+            staticHtml = htmlGenerator.genForPage("Missing_Page", missingPageContent)
             text_file.write(staticHtml)
 
     def processYamlFile(self, filePath, pageTitle):
